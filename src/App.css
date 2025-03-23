@@ -1,0 +1,135 @@
+@font-face {
+  font-family: 'Dela Gothic One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/DelaGothicOne-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Cabin';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/Cabin_Condensed-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Cabin';
+  font-style: bold;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/Cabin_Condensed-Bold.ttf') format('truetype');
+}
+
+body {
+  font-family: 'Dela Gothic One';
+  background-color: #B4B8AB;
+  text-align: center;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.screen {
+  background: #F4F9E9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 20px;
+}
+
+h1, h2 {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-family: 'Dela Gothic One';
+}
+
+p, button, input {
+  font-family: 'Cabin';
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.btn.primary {
+  background: #284B63;
+  color: white;
+}
+
+.btn.secondary {
+  background: #284B63;
+  color: white;
+}
+
+.btn.google {
+  background: #284B63;
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.input-field {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.otp-inputs input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #1d3557;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
