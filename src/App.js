@@ -39,29 +39,104 @@ const LoginScreen = ({ onNavigate }) => (
   </div>
 );
 
-const SignUpScreen = ({ onNavigate }) => (
-  <div className="screen signup slide-in">
-    <img src={logo} alt="Logo" className="logo small" />
-    <h2 className="signup-title">Register</h2>
-    <input className="input-field" type="text" placeholder="First Name" />
-    <input className="input-field" type="text" placeholder="Last Name" />
-    <input className="input-field" type="email" placeholder="Email" />
-    <input className="input-field" type="tel" placeholder="Phone Number" />
-    <input className="input-field" type="date" placeholder="Date of Birth" />
-    <input className="input-field" type="password" placeholder="Password" />
-    <input className="input-field" type="password" placeholder="Confirm Password" />
-    <div className="password-policy">
-      <p><strong>Password Must Include:</strong></p>
-      <ul>
-        <li>8+ characters</li>
-        <li>1 uppercase (A-Z)</li>
-        <li>1 lowercase (a-z)</li>
-        <li>1 number (0-9)</li>
-        <li>1 special (!@#$%^&*)</li>
-      </ul>
+const SignUpScreen = ({ onNavigate }) => {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const validatePassword = (pw) => ({
+    length: pw.length >= 8,
+    uppercase: /[A-Z]/.test(pw),
+    lowercase: /[a-z]/.test(pw),
+    number: /[0-9]/.test(pw),
+    special: /[!@#$%^&*]/.test(pw),
+  });
+
+  const validation = validatePassword(password);
+  const isPasswordValid = Object.values(validation).every(Boolean);
+  const passwordsMatch = password === confirmPassword;
+
+  return (
+    <div className="screen signup slide-in">
+      <img src={logo} alt="Logo" className="logo small" />
+      <h2 className="signup-title">Register</h2>
+      <input className="input-field" type="text" placeholder="First Name" />
+      <input className="input-field" type="text" placeholder="Last Name" />
+      <input className="input-field" type="email" placeholder="Email" />
+      <input className="input-field" type="tel" placeholder="Phone Number" />
+      <input className="input-field" type="date" placeholder="Date of Birth" />
+      <input
+        className="input-field"
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <input
+        className="input-field"
+        type="password"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+
+      <div className="password-policy">
+        <p><strong>Password Policies:</strong></p>
+        <ul>
+          <li className={validation.length ? "valid" : "invalid"}>Must have at least 8 characters</li>
+          <li className={validation.uppercase ? "valid" : "invalid"}>Must include at least one uppercase letter (A-Z)</li>
+          <li className={validation.lowercase ? "valid" : "invalid"}>Must include at least one lowercase letter (a-z)</li>
+          <li className={validation.number ? "valid" : "invalid"}>Must include at least one number (0-9)</li>
+          <li className={validation.special ? "valid" : "invalid"}>Must include at least one special character (!@#$%^&*)</li>
+        </ul>
+      </div>
+
+      {!isPasswordValid && password && (
+        <p className="error-message">Password does not meet all requirements.</p>
+      )}
+      {password && confirmPassword && !passwordsMatch && (
+        <p className="error-message">Passwords do not match.</p>
+      )}
+
+      <button
+        className="btn primary"
+        onClick={() => onNavigate("validation")}
+        disabled={!isPasswordValid || !passwordsMatch}
+      >
+        Next
+      </button>
+      <p className="link" onClick={() => onNavigate("login")}>
+        Already have an account? Log In
+      </p>
     </div>
-    <button className="btn primary" onClick={() => onNavigate("verification")}>Next</button>
-    <p className="link" onClick={() => onNavigate("login")}>Already have an account? Log In</p>
+  );
+};
+
+const ValidationScreen = () => (
+  <div className="screen validation slide-in">
+    <img src={logo} alt="Logo" className="logo small" />
+    <p>A One-Time Pin (OTP) has been sent to your <br />email. Please enter the code.</p>
+    
+    <div className="otp-container">
+      {[...Array(4)].map((_, i) => (
+        <input key={i} className="otp-inputs" type="text" inputMode="numeric" pattern="[0-9]{1}" maxLength="1" required />
+      ))}
+    </div>
+
+    <button className="btn primary">Proceed</button>
+
+    <div className="info-box">
+      <h2 className="info-correct">Is this information <br />correct?</h2>
+      <div className="info-container">
+        <div className="btn-edit-container">
+          <button className="btn edit">Edit</button>
+        </div>
+        <p className="info-categ">First Name:<span className="user-input"><br />Rose</span></p>
+        <p className="info-categ">Last Name:<span className="user-input"><br />Dela Cruz</span></p>
+        <p className="info-categ">Email:<span className="user-input"><br />rosedelacruz@gmail.com</span></p>
+        <p className="info-categ">Phone number:<span className="user-input"><br />09445637821</span></p>
+        <p className="info-categ">Date of Birth:<span className="user-input"><br />05/30/2003</span></p>
+      </div>
+    </div>
   </div>
 );
 
@@ -73,11 +148,12 @@ const App = () => {
       case "welcome": return <WelcomeScreen onNavigate={setScreen} />;
       case "login": return <LoginScreen onNavigate={setScreen} />;
       case "signup": return <SignUpScreen onNavigate={setScreen} />;
+      case "validation": return <ValidationScreen />;
       default: return <SplashScreen onFinish={() => setScreen("welcome")} />;
     }
   };
 
-  return <div className="container">{renderScreen()}</div>;
+  return renderScreen();
 };
 
 export default App;
