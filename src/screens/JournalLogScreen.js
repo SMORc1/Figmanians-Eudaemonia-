@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, FlatList, Modal, TextInput, TouchableOpacity, SafeAreaView,KeyboardAvoidingView,Platform } from 'react-native';
+import { View, Text, FlatList, Modal, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, FONT } from '../styles/AppStyles';
 
@@ -15,6 +15,7 @@ const JournalLogsScreen = ({ navigation }) => {
   const [entry, setEntry] = useState('');
   const [logs, setLogs] = useState([]);
   const [editingLog, setEditingLog] = useState(null);
+  const [showChatPrompt, setShowChatPrompt] = useState(false);
 
   useEffect(() => { loadLogs(); }, []);
 
@@ -35,13 +36,26 @@ const JournalLogsScreen = ({ navigation }) => {
     }
   };
 
+  const detectEmotionalContent = (text) => {
+    const lowerText = text.toLowerCase();
+    const emotionalKeywords = [
+      'sad', 'depressed', 'anxious', 'angry', 'lonely', 
+      'stressed', 'overwhelmed', 'hurt', 'frustrated', 
+      'scared', 'worried', 'heartbroken', 'lost'
+    ];
+    return emotionalKeywords.some(keyword => lowerText.includes(keyword));
+  };
+
   const handleSave = () => {
     if (!title.trim() || !entry.trim()) return;
+
+    const fullText = `${title}\n${entry}`;
+    const hasEmotionalContent = detectEmotionalContent(fullText);
 
     const updatedLogs = editingLog
       ? logs.map(log => 
           log.id === editingLog.id 
-            ? { ...log, text: `${title}\n${entry}` } 
+            ? { ...log, text: fullText } 
             : log
         )
       : [{
@@ -52,12 +66,29 @@ const JournalLogsScreen = ({ navigation }) => {
             hour: '2-digit',
             minute: '2-digit'
           }),
-          text: `${title}\n${entry}`,
+          text: fullText,
         }, ...logs];
 
     setLogs(updatedLogs);
     saveLogs(updatedLogs);
     resetForm();
+
+    if (hasEmotionalContent && !editingLog) {
+      Alert.alert(
+        "Need to talk?",
+        "I noticed your entry contains some heavy emotions. Would you like to chat with Eudaemonia to process these feelings?",
+        [
+          {
+            text: "No thanks",
+            style: "cancel"
+          },
+          { 
+            text: "Yes please", 
+            onPress: () => navigation.navigate('ChatBotScreen') 
+          }
+        ]
+      );
+    }
   };
 
   const resetForm = () => {
